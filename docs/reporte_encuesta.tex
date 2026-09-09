@@ -1,0 +1,310 @@
+\documentclass[12pt,letterpaper,oneside]{extreport}
+
+% Reporte de funcionamiento de la encuesta FES Aragon
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{geometry}
+\geometry{letterpaper,left=3cm,right=3cm,top=2.5cm,bottom=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\definecolor{azul}{HTML}{173F5F}
+\definecolor{azulClaro}{HTML}{20639B}
+\definecolor{amarillo}{HTML}{F6C85F}
+\definecolor{grisCodigo}{HTML}{F3F4F6}
+\definecolor{grisTexto}{HTML}{475569}
+
+\hypersetup{colorlinks=true,linkcolor=azul,urlcolor=azulClaro}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small Encuesta de Experiencia Universitaria}
+\rhead{\small FES Aragon}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\chapter}{\Huge\bfseries\color{azul}}{\thechapter.}{1em}{}
+\titleformat{\section}{\Large\bfseries\color{azul}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{azulClaro}}{\thesubsection}{1em}{}
+\titlespacing*{\chapter}{0pt}{-25pt}{20pt}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{grisCodigo},
+  frame=single,
+  breaklines=true,
+  showstringspaces=false,
+  columns=fullflexible
+}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{1.2cm}
+{\Huge\bfseries Universidad Nacional Autónoma de México\par}
+\vspace{0.5cm}
+{\LARGE Facultad de Estudios Superiores Aragón\par}
+\vspace{2cm}
+\rule{\linewidth}{1.5pt}
+\vspace{0.7cm}
+{\Huge\bfseries Reporte de funcionamiento\par}
+\vspace{0.4cm}
+{\LARGE Encuesta de Experiencia Universitaria\par}
+\vspace{0.7cm}
+\rule{\linewidth}{1.5pt}
+\vfill
+\begin{flushleft}
+\large
+\textbf{Asignatura:} Desarrollo Web\\[0.35cm]
+\textbf{Proyecto:} Aplicación web de encuesta y análisis de respuestas\\[0.35cm]
+\textbf{Tecnologías:} PHP, MySQL, HTML, CSS, JavaScript, Chart.js y Docker\\[0.35cm]
+\textbf{Autor:} [Escribe tu nombre]\\[0.35cm]
+\textbf{Fecha:} \today
+\end{flushleft}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\chapter{Resumen ejecutivo}
+
+El presente documento describe el funcionamiento de una aplicación web diseñada para capturar y analizar una encuesta de experiencia universitaria. El sistema permite que una persona entre directamente a la encuesta, registre sus datos básicos y responda seis preguntas cerradas y dos preguntas abiertas.
+
+La información se almacena en una base de datos MySQL. Después de guardar la encuesta, la aplicación muestra un resumen individual y gráficas interactivas. En la página principal también se presentan las distribuciones acumuladas de las respuestas almacenadas, incluyendo los registros iniciales y las nuevas respuestas.
+
+La aplicación utiliza PHP para la lógica del servidor, MySQL para persistencia, HTML y CSS para la interfaz, JavaScript con Chart.js para las gráficas, y Docker Compose para levantar los servicios web y de base de datos.
+
+\chapter{Objetivos}
+
+\section{Objetivo general}
+
+Desarrollar una aplicación web capaz de capturar respuestas de una encuesta y mostrar información estadística actualizada a partir de los registros almacenados en MySQL.
+
+\section{Objetivos específicos}
+
+\begin{enumerate}[label=\arabic*.]
+    \item Registrar sexo y edad de cada participante.
+    \item Validar que la edad mínima para responder sea de 20 años.
+    \item Capturar seis preguntas cerradas con cuatro opciones cada una.
+    \item Capturar dos respuestas abiertas.
+    \item Guardar cada interacción en la tabla \texttt{encuesta\_respuestas}.
+    \item Calcular frecuencias y porcentajes con base en todos los registros.
+    \item Presentar gráficas circulares y demográficas de sexo y edad.
+\end{enumerate}
+
+\chapter{Descripción general del sistema}
+
+La aplicación sigue un flujo sencillo para reducir pasos innecesarios para el participante:
+
+\begin{enumerate}[label=\arabic*.]
+    \item La persona entra a la URL de la aplicación.
+    \item El sistema crea o reutiliza una sesión anónima.
+    \item La aplicación muestra directamente la encuesta.
+    \item El servidor valida todos los datos recibidos.
+    \item La respuesta se inserta en MySQL.
+    \item El usuario es enviado a la página de resumen.
+    \item La aplicación consulta todos los registros y genera las gráficas.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  bloque/.style={draw, rounded corners, fill=blue!8, align=center, minimum width=5.2cm, minimum height=0.85cm},
+  flecha/.style={-{Latex}, thick, color=azul}
+]
+\node[bloque] (inicio) {Entrada automática};
+\node[bloque, below=of inicio] (encuesta) {Formulario de encuesta};
+\node[bloque, below=of encuesta] (bd) {MySQL: encuesta\_respuestas};
+\node[bloque, below=of bd] (graficas) {Resumen y gráficas interactivas};
+\draw[flecha] (inicio) -- (encuesta);
+\draw[flecha] (encuesta) -- (bd);
+\draw[flecha] (bd) -- (graficas);
+\end{tikzpicture}
+\caption{Flujo general de la aplicación}
+\end{figure}
+
+\chapter{Cuestionario implementado}
+
+La encuesta contiene dos datos demográficos, seis preguntas cerradas y dos preguntas abiertas. La edad se valida en el servidor y en el navegador con un rango de 20 a 99 años.
+
+\begin{longtable}{p{0.08\textwidth}p{0.42\textwidth}p{0.38\textwidth}}
+\caption{Preguntas cerradas y opciones}\label{tab:preguntas}\\
+\toprule
+\textbf{No.} & \textbf{Pregunta} & \textbf{Opciones}\
+\midrule
+\endfirsthead
+\toprule
+\textbf{No.} & \textbf{Pregunta} & \textbf{Opciones}\
+\midrule
+\endhead
+1 & Satisfacción con la limpieza del campus & Muy satisfecho; Satisfecho; Poco satisfecho; Nada satisfecho\\
+2 & Espacio utilizado con mayor frecuencia & Aulas; Biblioteca; Áreas deportivas; Laboratorios\\
+3 & Medio para enterarse de actividades universitarias & Redes sociales; Carteles; Docentes; Compañeros\\
+4 & Aspecto que se mejoraría primero en la FES & Seguridad; Conectividad; Áreas verdes; Servicios escolares\\
+5 & Frecuencia de participación en actividades culturales & Cada semana; Cada mes; Ocasionalmente; Nunca\\
+6 & Horario preferido para actividades extracurriculares & Antes de clases; Entre clases; Después de clases; Fin de semana\\
+\bottomrule
+\end{longtable}
+
+\section{Preguntas abiertas}
+
+\begin{enumerate}[label=\arabic*.]
+    \item ¿Qué cambio concreto haría más agradable tu experiencia en el campus?
+    \item ¿Qué actividad o servicio nuevo te gustaría encontrar en la FES Aragón?
+\end{enumerate}
+
+\chapter{Base de datos}
+
+La tabla principal de respuestas es \texttt{encuesta\_respuestas}. Cada fila representa una interacción completa con la encuesta.
+
+\begin{longtable}{p{0.28\textwidth}p{0.58\textwidth}}
+\caption{Campos de la tabla de respuestas}\label{tab:bd}\\
+\toprule
+\textbf{Campo} & \textbf{Descripción}\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Campo} & \textbf{Descripción}\
+\midrule
+\endhead
+\texttt{id} & Identificador autoincremental de la respuesta.\\
+\texttt{user\_id} & Identificador del usuario asociado a la sesión.\\
+\texttt{sexo} & Categoría demográfica: Mujer, Hombre, No binario o Prefiero no decirlo.\\
+\texttt{edad} & Edad de la persona, validada entre 20 y 99 años.\\
+\texttt{pregunta\_1} a \texttt{pregunta\_6} & Respuestas cerradas del cuestionario.\\
+\texttt{abierta\_1}, \texttt{abierta\_2} & Respuestas de texto libre.\\
+\texttt{created\_at} & Fecha y hora de creación del registro.\\
+\bottomrule
+\end{longtable}
+
+Para la entrega inicial se preparan 98 registros. La aplicación puede recibir posteriormente dos registros adicionales para alcanzar 100 respuestas.
+
+\chapter{Funcionamiento de las gráficas}
+
+\section{Gráficas de preguntas cerradas}
+
+La página de encuesta consulta la tabla de respuestas y cuenta cuántas veces aparece cada opción válida. Los resultados se envían al navegador en formato JSON y Chart.js genera una gráfica circular para cada pregunta.
+
+El porcentaje de una opción se calcula mediante:
+
+\[
+\text{Porcentaje} = \frac{\text{frecuencia de la opción}}{\text{total de respuestas}} \times 100
+\]
+
+Cada pregunta conserva sus cuatro opciones y la suma de sus frecuencias representa el total de registros válidos.
+
+\section{Gráfica de edad}
+
+La edad se agrupa en cuatro rangos:
+
+\begin{itemize}
+    \item 20 a 24 años.
+    \item 25 a 29 años.
+    \item 30 a 39 años.
+    \item 40 años o más.
+\end{itemize}
+
+\section{Gráfica de sexo}
+
+La distribución por sexo utiliza las categorías almacenadas en la base de datos: Mujer, Hombre, No binario y Prefiero no decirlo.
+
+Las gráficas incluyen información emergente o \textit{tooltip} con la frecuencia y el porcentaje correspondiente.
+
+\section{Historial de respuestas abiertas}
+
+El sistema incorpora un apartado administrativo denominado ``Historial de respuestas abiertas''. Esta vista consulta los campos \texttt{abierta\_1}, \texttt{abierta\_2} y \texttt{created\_at} de la tabla \texttt{encuesta\_respuestas}. Las entradas se presentan en orden cronológico descendente para que la administración pueda revisar primero las respuestas más recientes.
+
+Cada entrada incluye el identificador de la respuesta, la fecha de registro, sexo, edad y el contenido de ambas preguntas abiertas. El acceso al historial está restringido a usuarios con rol administrativo.
+
+
+\chapter{Arquitectura y despliegue}
+
+\section{Tecnologías}
+
+\begin{itemize}
+    \item \textbf{PHP 8.2 y Apache:} procesamiento del servidor y páginas dinámicas.
+    \item \textbf{MySQL 8:} almacenamiento de respuestas.
+    \item \textbf{HTML5 y CSS3:} estructura y diseño responsive.
+    \item \textbf{JavaScript y Chart.js:} gráficas interactivas.
+    \item \textbf{Docker Compose:} orquestación de los servicios web y MySQL.
+\end{itemize}
+
+\section{Servicios de Docker}
+
+\begin{table}[H]
+\centering
+\caption{Servicios definidos en Docker Compose}
+\begin{tabular}{lll}
+\toprule
+\textbf{Servicio} & \textbf{Contenedor} & \textbf{Puerto}\
+\midrule
+Web & \texttt{fes\_web} & 8080:80\\
+Base de datos & \texttt{fes\_mysql} & 3307:3306\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+MySQL incluye un \textit{healthcheck}. El servicio web depende de que la base de datos se encuentre saludable antes de iniciar, lo que evita errores de conexión durante el arranque.
+
+\section{Comandos de ejecución}
+
+\begin{lstlisting}[language=bash]
+docker compose up -d --build
+docker compose ps
+docker compose logs --tail=100
+\end{lstlisting}
+
+Para cargar los registros iniciales en una base existente:
+
+\begin{lstlisting}[language=bash]
+Get-Content database/restore_hobbies.sql |
+  docker compose exec -T mysql mysql -uroot -proot -Dfesaragon
+\end{lstlisting}
+
+\chapter{Validaciones y pruebas}
+
+\begin{longtable}{p{0.35\textwidth}p{0.5\textwidth}}
+\caption{Pruebas funcionales realizadas}\label{tab:pruebas}\\
+\toprule
+\textbf{Prueba} & \textbf{Resultado esperado}\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Prueba} & \textbf{Resultado esperado}\
+\midrule
+\endhead
+Acceso a la raíz & Redirección automática a la encuesta.\\
+Edad menor a 20 & El servidor rechaza la respuesta.\\
+Formulario incompleto & Se muestran mensajes de validación.\\
+Envío válido & Se inserta una fila en MySQL.\\
+Nueva respuesta & Aumenta el total mostrado por las gráficas.\\
+Gráfica por edad & Agrupa los registros en cuatro rangos.\\
+Gráfica por sexo & Cuenta las categorías guardadas.\\
+Error de MySQL al iniciar & Docker espera el estado saludable del servicio.\\
+\bottomrule
+\end{longtable}
+
+\chapter{Conclusiones}
+
+La aplicación cumple con el flujo requerido para capturar, guardar y analizar respuestas de una encuesta. La información se conserva en MySQL y las gráficas se actualizan con base en todos los registros disponibles, incluyendo los datos iniciales y las nuevas interacciones.
+
+La separación entre formulario, persistencia y visualización facilita el mantenimiento del proyecto. Además, Docker Compose permite levantar el entorno de desarrollo de manera reproducible y el diseño responsive permite utilizar la encuesta desde distintos tamaños de pantalla.
+
+Como trabajo futuro se pueden incorporar exportación de resultados a PDF, filtros por fecha y una vista administrativa con más comparaciones entre variables demográficas.
+
+\end{document}

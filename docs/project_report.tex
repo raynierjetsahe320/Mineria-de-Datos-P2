@@ -1,0 +1,777 @@
+\documentclass[12pt,letterpaper,oneside]{extreport}
+
+% =========================================
+% PAQUETES
+% =========================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+
+\usepackage{geometry}
+\geometry{
+    letterpaper,
+    left=3cm,
+    right=3cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+% TikZ for ER diagrams
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.multipart,calc}
+
+% Styles for ER diagram
+	\tikzset{
+    entity/.style={draw, thick, rectangle, rounded corners, fill=gray!10, inner sep=6pt, minimum width=3.5cm},
+    attr/.style={draw, thin, ellipse, fill=white!90, inner sep=2pt},
+    rel/.style={draw, diamond, aspect=1.5, inner sep=2pt, fill=white!90},
+    pk/.style={font=\bfseries},
+    fk/.style={font=\itshape},
+    line/.style={-Latex, >=Stealth, thick}
+}
+
+% =========================================
+% ELIMINAR ESPACIOS FEOS DE CHAPTER
+% =========================================
+\titlespacing*{\chapter}{0pt}{-40pt}{20pt}
+
+% =========================================
+% CONFIGURACIÓN DE TÍTULOS
+% =========================================
+\titleformat{\chapter}
+{\Huge\bfseries}
+{\thechapter.}
+{1em}
+{}
+
+\titleformat{\section}
+{\LARGE\bfseries}
+{\thesection}
+{1em}
+{}
+
+\titleformat{\subsection}
+{\Large\bfseries}
+{\thesubsection}
+{1em}
+{}
+
+% =========================================
+% CONFIGURACIÓN DE CÓDIGO
+% =========================================
+\lstset{
+    basicstyle=\ttfamily\normalsize,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+% =========================================
+% DOCUMENTO
+% =========================================
+\begin{document}
+
+% =========================================
+% PORTADA
+% =========================================
+\begin{titlepage}
+
+\centering
+
+\vspace*{1.5cm}
+
+{\Huge \textbf{Universidad Nacional Autónoma de México}}\\[0.8cm]
+
+{\LARGE Facultad de Estudios Superiores Aragón}\\[1.8cm]
+
+{\Huge \textbf{DOCUMENTO INTEGRAL DEL PROYECTO}}\\[1.2cm]
+
+{\Huge Sistema de Gestión de Incidencias}\\[2cm]
+
+\begin{flushleft}
+
+\Large
+
+\textbf{Asignatura:} Desarrollo Web\\[0.5cm]
+
+\textbf{Proyecto:} Sistema de Incidencias\\[0.5cm]
+
+\textbf{Integrantes:} Equipo de Desarrollo\\[0.5cm]
+
+\textbf{Institución:} FES Aragón\\[0.5cm]
+
+\textbf{Fecha de entrega:} \today
+
+\end{flushleft}
+
+\vfill
+
+\end{titlepage}
+
+% =========================================
+% ÍNDICE
+% =========================================
+\tableofcontents
+\newpage
+
+% =========================================
+% RESUMEN EJECUTIVO
+% =========================================
+\chapter{Resumen Ejecutivo}
+
+El presente proyecto denominado ``Sistema de Gestión de Incidencias'' fue desarrollado con la finalidad de optimizar y modernizar el proceso de administración de incidencias dentro de la Facultad de Estudios Superiores Aragón.
+
+Actualmente, muchos reportes relacionados con mantenimiento, infraestructura, aulas, laboratorios y equipos tecnológicos son realizados mediante métodos manuales o medios informales, provocando pérdida de información, retrasos administrativos y falta de seguimiento adecuado.
+
+Para solucionar esta problemática se diseñó una plataforma web que permite centralizar toda la información relacionada con incidencias institucionales.
+
+El sistema permite:
+
+\begin{itemize}
+    \item Registro e inicio de sesión de usuarios.
+    
+    \item Administración de incidencias.
+    
+    \item Seguimiento de reportes.
+    
+    \item Gestión de estados.
+    
+    \item Visualización de estadísticas.
+    
+    \item Administración de usuarios.
+\end{itemize}
+
+Las tecnologías utilizadas incluyen PHP 8, MySQL 8, Docker (Docker Compose), HTML5, CSS3, JavaScript y GitHub.
+Adicionalmente el proyecto incorpora librerías del frontend para visualización y exportación: Chart.js para gráficas y html2canvas + jsPDF para exportar el dashboard a PDF.
+
+El despliegue está orquestado con \texttt{docker-compose.yml} y define dos servicios principales: el servicio web (contenedor llamado \texttt{fes\_web}) y el servicio de base de datos (contenedor llamado \texttt{fes\_mysql}).
+Por defecto se exponen los puertos 8080 (host -> contenedor Apache 80) y 3307 (host -> contenedor MySQL 3306). La base de datos creada por defecto se llama \texttt{fesaragon} y la contraseña root usada en el entorno de desarrollo es \texttt{root} (ver sección de seguridad para recomendaciones de producción).
+
+Credenciales de ejemplo incluidas en \texttt{database/seed.sql} (desarrollo): usuario administrador \texttt{admin@aragon.unam.mx} con contraseña \texttt{Admin2026}. El seed original contiene contraseñas en texto para facilitar pruebas; el sistema implementa migración a \texttt{password\_hash} y se recomienda reemplazar estas entradas por hashes antes de producción.
+
+El sistema busca mejorar la eficiencia administrativa y contribuir a la transformación digital dentro de la institución.
+
+% =========================================
+% INTRODUCCIÓN
+% =========================================
+\chapter{Introducción}
+
+La transformación digital se ha convertido en una necesidad importante para las instituciones educativas modernas.
+
+Actualmente, muchos procesos administrativos continúan realizándose manualmente, generando problemas de organización y retrasos operativos.
+
+Dentro de la FES Aragón existen constantemente incidencias relacionadas con infraestructura, laboratorios, centros de cómputo y servicios tecnológicos que requieren seguimiento continuo.
+
+Sin embargo, la ausencia de una plataforma centralizada dificulta el control adecuado de la información.
+
+Debido a esta problemática surge la necesidad de desarrollar un sistema web capaz de centralizar y administrar incidencias de manera eficiente.
+
+El proyecto busca optimizar procesos administrativos y mejorar la comunicación entre usuarios y administradores.
+
+% =========================================
+% PLANTEAMIENTO DEL PROBLEMA
+% =========================================
+\chapter{Planteamiento del Problema}
+
+Actualmente, la gestión de incidencias presenta múltiples limitaciones operativas.
+
+Muchos reportes relacionados con mantenimiento o fallas tecnológicas se realizan mediante métodos informales.
+
+Entre los principales problemas detectados se encuentran:
+
+\begin{itemize}
+    \item Pérdida de información.
+    
+    \item Duplicidad de reportes.
+    
+    \item Falta de seguimiento.
+    
+    \item Ausencia de estadísticas.
+    
+    \item Procesos administrativos lentos.
+\end{itemize}
+
+Estas limitaciones afectan directamente la eficiencia administrativa y la calidad de atención ofrecida a estudiantes y personal académico.
+
+Por ello se propone desarrollar una plataforma tecnológica que permita automatizar el proceso de administración de incidencias.
+
+% =========================================
+% OBJETIVOS
+% =========================================
+\chapter{Objetivos}
+
+\section{Objetivo General}
+
+Desarrollar un sistema web de gestión de incidencias para optimizar el registro y seguimiento de reportes dentro de la FES Aragón.
+
+\section{Objetivos Específicos}
+
+\begin{enumerate}
+    \item Implementar autenticación segura.
+    
+    \item Desarrollar un módulo CRUD de incidencias.
+    
+    \item Centralizar información administrativa.
+    
+    \item Implementar estadísticas administrativas.
+    
+    \item Facilitar el seguimiento de incidencias.
+    
+    \item Mejorar la organización institucional.
+\end{enumerate}
+
+% =========================================
+% MARCO TEÓRICO
+% =========================================
+\chapter{Marco Teórico}
+
+\section{Sistemas de Información}
+
+Los sistemas de información permiten recopilar, procesar y almacenar datos con el objetivo de apoyar procesos administrativos.
+
+Actualmente son fundamentales debido a que automatizan procesos y optimizan recursos.
+
+\section{Desarrollo Web}
+
+El desarrollo web consiste en crear aplicaciones accesibles desde navegadores mediante tecnologías frontend y backend.
+
+Las aplicaciones web modernas permiten acceso multiplataforma y facilidad de mantenimiento.
+
+\section{Bases de Datos}
+
+Las bases de datos permiten almacenar información estructurada de manera organizada y segura.
+
+En este proyecto se utiliza MySQL debido a su estabilidad y compatibilidad con PHP.
+
+\section{Docker}
+
+Docker es una plataforma basada en contenedores utilizada para crear entornos consistentes de desarrollo y producción.
+
+\section{Git}
+
+Git es un sistema de control de versiones distribuido utilizado para administrar cambios en proyectos de software.
+
+% =========================================
+% ALCANCE
+% =========================================
+\chapter{Alcance del Sistema}
+
+\section{Funciones que realizará el sistema}
+
+\begin{itemize}
+    \item Registro de usuarios.
+    
+    \item Inicio de sesión.
+    
+    \item Administración de incidencias.
+    
+    \item Gestión de estados.
+    
+    \item Panel administrativo.
+    
+    \item Estadísticas.
+\end{itemize}
+
+\section{Funciones que no realizará}
+
+\begin{itemize}
+    \item Reparaciones automáticas.
+    
+    \item Gestión financiera.
+    
+    \item Integración con servicios externos.
+\end{itemize}
+
+% =========================================
+% REQUERIMIENTOS
+% =========================================
+\chapter{Requerimientos del Sistema}
+
+\section{Requerimientos Funcionales}
+
+\begin{itemize}
+    \item Registro de usuarios.
+    
+    \item Inicio de sesión.
+    
+    \item CRUD de incidencias.
+    
+    \item Administración de estados.
+    
+    \item Gestión de usuarios.
+\end{itemize}
+
+\section{Requerimientos No Funcionales}
+
+\begin{itemize}
+    \item Seguridad.
+    
+    \item Escalabilidad.
+    
+    \item Disponibilidad.
+    
+    \item Compatibilidad web.
+\end{itemize}
+
+% =========================================
+% CASOS DE USO
+% =========================================
+\chapter{Casos de Uso}
+
+\section{Registrar Incidencia}
+
+\textbf{Actor principal:} Usuario.
+
+\textbf{Descripción:}
+
+El usuario inicia sesión y registra una incidencia proporcionando título, descripción y prioridad.
+
+\textbf{Resultado esperado:}
+
+La incidencia queda almacenada para seguimiento administrativo.
+
+% =========================================
+% HISTORIAS DE USUARIO
+% =========================================
+\chapter{Historias de Usuario}
+
+\begin{itemize}
+    \item Como alumno quiero registrar incidencias para reportar problemas institucionales.
+    
+    \item Como administrador quiero gestionar estados de incidencias.
+    
+    \item Como usuario quiero consultar mis reportes registrados.
+\end{itemize}
+
+% =========================================
+% TECNOLOGÍAS
+% =========================================
+\chapter{Tecnologías Seleccionadas}
+
+\begin{longtable}{|p{5cm}|p{7cm}|}
+\hline
+\textbf{Tecnología} & \textbf{Uso} \\
+\hline
+PHP 8 & Backend \\
+\hline
+MySQL & Base de datos \\
+\hline
+Docker & Contenedores \\
+\hline
+HTML5 & Frontend \\
+\hline
+CSS3 & Diseño visual \\
+\hline
+JavaScript & Interactividad \\
+\hline
+GitHub & Control de versiones \\
+\hline
+Chart.js & Estadísticas \\
+\hline
+\end{longtable}
+
+% =========================================
+% ARQUITECTURA
+% =========================================
+\chapter{Arquitectura del Sistema}
+
+El sistema utiliza una arquitectura cliente-servidor.
+
+\section{Cliente}
+
+Representa la interfaz web accesible desde navegadores.
+
+\section{Servidor}
+
+Implementado mediante Apache y PHP.
+
+\section{Base de Datos}
+
+MySQL almacena toda la información relacionada con usuarios e incidencias.
+
+% =========================================
+% ESTRUCTURA DEL PROYECTO
+% =========================================
+\chapter{Estructura del Proyecto}
+
+\begin{lstlisting}
+project/
+│
+├── config/
+├── database/
+├── public/
+├── src/
+├── templates/
+├── Dockerfile
+└── docker-compose.yml
+\end{lstlisting}
+
+% Detalles añadidos: descripción por carpeta
+\paragraph{Notas:}
+\begin{itemize}
+    \item \texttt{config/} contiene \texttt{database.php} con la conexión mysqli y el ajuste de charset a \texttt{utf8mb4}.
+    \item \texttt{src/} contiene \texttt{auth.php} con helpers (find\_user\_by\_email, register\_user, ensure\_logged\_in, current\_user y fix\_encoding).
+    \item \texttt{public/} es el DocumentRoot montado en el contenedor web (\texttt{/var/www/html/public}) y aloja las páginas públicas (login, register, dashboard, CRUD de incidencias).
+    \item \texttt{database/} aloja el esquema (schema.sql), los seeds (seed.sql) y scripts utilitarios de conversión/limpieza.
+\end{itemize}
+
+\chapter{Detalles de implementación}
+En esta sección se documentan piezas concretas del código que conviene conocer al ampliar o mantener la aplicación.
+
+\section{Conexión a la base de datos}
+El archivo principal de conexión es \texttt{config/database.php}. Contiene una conexión mysqli simple que apunta al host \texttt{mysql} (nombre del servicio Docker) y selecciona la base de datos \texttt{fesaragon}. Además fuerza el conjunto de caracteres UTF-8 extendido:
+\begin{lstlisting}[language=PHP]
+$conexion = mysqli_connect('mysql','root','root','fesaragon');
+if(!$conexion) die('Error de conexion');
+mysqli_set_charset($conexion, 'utf8mb4');
+\end{lstlisting}
+
+\section{Funciones de autenticación y utilidades}
+Archivo: \texttt{src/auth.php}. Las funciones relevantes que se usan en las vistas son:
+\begin{itemize}
+    \item \texttt{find\_user\_by\_email(\$email)} — retorna el registro de \texttt{usuarios} por correo.
+    \item \texttt{register\_user(\$nombre,\$correo,\$cuenta,\$password)} — registra un usuario usando \texttt{password\_hash} para guardar la contraseña.
+    \item \texttt{ensure\_logged\_in()} — redirige al login si no hay sesión activa.
+    \item \texttt{current\_user()} — devuelve los datos del usuario actual según \texttt{\$_SESSION['user\_id']}.
+    \item \texttt{fix\_encoding(\$s)} — función práctica para corregir mojibake frecuente en algunos campos (reemplaza secuencias como \texttt{"Ã¡"} por \texttt{"á"}).
+\end{itemize}
+
+Ejemplo de uso en \texttt{login.php}:
+\begin{lstlisting}[language=PHP]
+$u = find_user_by_email(
+        mysqli_real_escape_string($conexion, $correo)
+);
+if($u && password_verify($password, $u['password'])){
+    // login OK: setear session y redirigir
+}
+\end{lstlisting}
+
+\section{Manejo de encoding y mojibake}
+La aplicación contiene utilitarios para intentar arreglar casos comunes de mojibake al mostrar datos; sin embargo, la estrategia correcta consiste en convertir la base de datos a \texttt{utf8mb4} y, si es necesario, ejecutar scripts de reparación sobre columnas afectadas (ver capítulo de migraciones).
+
+\chapter{Uso de Contenedores y despliegue}
+El proyecto se despliega con Docker Compose. El fichero \texttt{docker-compose.yml} define dos servicios principales: \texttt{web} y \texttt{mysql}.
+
+\section{Resumen de servicios}
+\begin{itemize}
+    \item \texttt{web}: construye la imagen a partir del Dockerfile del repo, se monta la carpeta raíz del proyecto en \texttt{/var/www/html} dentro del contenedor y expone el puerto 80 del contenedor en el puerto 8080 del host. Nombre del contenedor: \texttt{fes\_web}.
+    \item \texttt{mysql}: usa la imagen oficial \texttt{mysql:8}, crea una base de datos \texttt{fesaragon} y utiliza contraseña root \texttt{root} en el entorno de desarrollo. Nombre del contenedor: \texttt{fes\_mysql}.
+\end{itemize}
+\newpage
+\section{Extracto relevante de \texttt{docker-compose.yml}}
+\begin{lstlisting}
+services:
+    web:
+        build: .
+        container_name: fes_web
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/var/www/html
+        depends_on:
+            - mysql
+
+    mysql:
+        image: mysql:8
+        container_name: fes_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: fesaragon
+        ports:
+            - "3307:3306"
+        volumes:
+            - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+            - ./database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+\end{lstlisting}
+
+\section{Comandos recomendados (Windows PowerShell)}
+\begin{verbatim}
+# Construir y levantar servicios
+docker-compose build --no-cache
+docker-compose up -d
+
+# Ver logs del web
+docker-compose logs -f web
+
+# Para detener y remover contenedores y volúmenes locales (destrucción de datos)
+docker-compose down -v
+\end{verbatim}
+
+\chapter{Modelo de Base de Datos}
+Se presenta aquí el DDL principal extraído de \texttt{database/schema.sql} con comentarios.
+
+\section{Tabla Usuarios}
+
+\begin{itemize}
+    \item id
+    
+    \item nombre
+    
+    \item correo
+    
+    \item password
+    
+    \item rol
+\end{itemize}
+
+\section{Tabla Incidencias}
+
+\begin{itemize}
+    \item id
+    
+    \item titulo
+    
+    \item descripcion
+    
+    \item estado
+    
+    \item prioridad
+\end{itemize}
+
+\newpage
+\section{Diagrama Entidad--Relación}
+Para facilitar la comprensión de las relaciones entre tablas, a continuación se incluye un diagrama entidad-relación compacto que muestra entidades, claves primarias, claves foráneas y cardinalidades.
+
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[
+    node distance=3cm,
+    every node/.style={font=\small}
+]
+
+% =========================
+% ENTIDADES
+% =========================
+
+\node[entity] (usuarios)
+{
+    \shortstack{
+        \textbf{usuarios} \\
+        \small id (PK) \\
+        nombre \\
+        correo \\
+        cuenta \\
+        password \\
+        rol
+    }
+};
+
+\node[entity, right=5cm of usuarios] (incidencias)
+{
+    \shortstack{
+        \textbf{incidencias} \\
+        \small id (PK) \\
+        titulo \\
+        descripcion \\
+        tipo \\
+        prioridad \\
+        estado \\
+        created\_at \\
+        updated\_at
+    }
+};
+
+\node[entity, above=3cm of incidencias] (edificios)
+{
+    \shortstack{
+        \textbf{edificios} \\
+        \small id (PK) \\
+        nombre \\
+        pisos
+    }
+};
+
+\node[entity, right=5cm of edificios] (salones)
+{
+    \shortstack{
+        \textbf{salones} \\
+        \small id (PK) \\
+        nombre \\
+        edificio\_id (FK)
+    }
+};
+
+\node[entity, below=3cm of salones] (zonas)
+{
+    \shortstack{
+        \textbf{zonas} \\
+        \small id (PK) \\
+        nombre
+    }
+};
+
+% =========================
+% RELACIONES
+% =========================
+
+\draw[line]
+(usuarios.east) -- node[above]{0..*}
+(incidencias.west);
+
+\draw[line]
+(incidencias.north) -- node[left]{0..1}
+(edificios.south);
+
+\draw[line]
+(edificios.east) -- node[above]{1..*}
+(salones.west);
+
+\draw[line]
+(incidencias.east) -- node[right]{0..1}
+(salones.south west);
+
+\draw[line]
+(incidencias.south east) -- node[right]{0..1}
+(zonas.west);
+
+\end{tikzpicture}
+}
+
+\caption{Diagrama entidad-relación del sistema}
+\label{fig:er-diagrama}
+\end{figure}
+
+
+
+
+
+\noindent Documento actualizado con información extraída directamente del árbol del proyecto para que el reporte refleje la implementación real.
+
+% =========================================
+% CONTROL DE VERSIONES
+% =========================================
+\chapter{Estrategia de Control de Versiones}
+
+GitHub fue utilizado para administrar el código fuente del proyecto.
+
+El proyecto implementa:
+
+\begin{itemize}
+    \item Commits.
+    
+    \item Ramas.
+    
+    \item Pull Requests.
+    
+    \item Trabajo colaborativo.
+\end{itemize}
+
+% =========================================
+% SEGURIDAD
+% =========================================
+\chapter{Seguridad del Sistema}
+
+El sistema implementa medidas de seguridad importantes como:
+
+\begin{itemize}
+    \item Contraseñas cifradas.
+    
+    \item Validación de sesiones.
+    
+    \item Prepared Statements.
+    
+    \item Protección contra SQL Injection.
+    
+    \item Restricción por roles.
+\end{itemize}
+
+% =========================================
+% PRUEBAS
+% =========================================
+\chapter{Estrategia de Pruebas}
+
+\section{Pruebas Funcionales}
+
+\begin{itemize}
+    \item Registro de usuarios.
+    
+    \item Inicio de sesión.
+    
+    \item Registro de incidencias.
+    
+    \item Cambio de estados.
+\end{itemize}
+
+\section{Pruebas de Carga}
+
+Se realizaron pruebas utilizando herramientas como k6 y ApacheBench.
+
+% =========================================
+% RIESGOS
+% =========================================
+\chapter{Riesgos del Proyecto}
+
+\begin{itemize}
+    \item Fallos del servidor.
+    
+    \item Vulnerabilidades de seguridad.
+    
+    \item Pérdida de información.
+    
+    \item Problemas de conectividad.
+\end{itemize}
+
+% =========================================
+% CONCLUSIONES
+% =========================================
+\chapter{Conclusiones}
+
+El sistema desarrollado representa una solución eficiente para optimizar la administración de incidencias dentro de la institución.
+
+La plataforma permite centralizar información, mejorar la trazabilidad y reducir tiempos de atención.
+
+Además, el uso de tecnologías modernas garantiza estabilidad, escalabilidad y facilidad de mantenimiento.
+
+% =========================================
+% REFERENCIAS
+% =========================================
+\chapter{Referencias}
+
+\begin{itemize}
+
+    \item PHP Documentation. Recuperado de: \\
+    \url{https://www.php.net/docs.php}
+
+    \item Docker Documentation. Recuperado de: \\
+    \url{https://docs.docker.com/}
+
+    \item MySQL Documentation. Recuperado de: \\
+    \url{https://dev.mysql.com/doc/}
+
+    \item Git Documentation. Recuperado de: \\
+    \url{https://git-scm.com/doc}
+
+    \item MDN Web Docs - HTML, CSS y JavaScript. Recuperado de: \\
+    \url{https://developer.mozilla.org/}
+
+    \item Chart.js Documentation. Recuperado de: \\
+    \url{https://www.chartjs.org/docs/latest/}
+
+    \item Apache HTTP Server Documentation. Recuperado de: \\
+    \url{https://httpd.apache.org/docs/}
+
+    \item GitHub Documentation. Recuperado de: \\
+    \url{https://docs.github.com/}
+
+    \item Repositorio oficial del proyecto. Recuperado de: \\
+    \url{https://github.com/raynierjetsahe320/VinculacionEmpresarial}
+
+\end{itemize}
+
+\end{document}

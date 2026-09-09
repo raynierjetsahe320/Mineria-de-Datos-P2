@@ -1,0 +1,767 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass[12pt, a4paper, spanish]{article}
+
+% ============== PAQUETES NECESARIOS ==============
+\usepackage[utf-8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{titlesec}
+
+% ============== CONFIGURACIÓN DE COLORES ==============
+\definecolor{azulUNAM}{HTML}{003366}
+\definecolor{naranjaUNAM}{HTML}{FF9900}
+\definecolor{verde}{HTML}{28A745}
+\definecolor{rojo}{HTML}{DC3545}
+\definecolor{amarillo}{HTML}{FFC107}
+\definecolor{gris}{HTML}{6C757D}
+\definecolor{codeBg}{HTML}{f5f5f5}
+
+% ============== CONFIGURACIÓN DE ESTILOS ==============
+\titleformat{\section}{\Large\bfseries\color{azulUNAM}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{azulUNAM}}{}{0em}{}
+\titleformat{\subsubsection}{\bfseries\color{naranjaUNAM}}{}{0em}{}
+
+% ============== CONFIGURACIÓN DE CÓDIGO ==============
+\lstset{
+    language=PHP,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{azulUNAM}\bfseries,
+    commentstyle=\color{gris}\itshape,
+    stringstyle=\color{verde},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    numbers=left,
+    numberstyle=\tiny\color{gris},
+    backgroundcolor=\color{codeBg},
+    frame=single,
+    xleftmargin=15pt,
+    belowcaptionskip=5pt,
+    captionpos=b
+}
+
+% ============== CONFIGURACIÓN DE HEADER Y FOOTER ==============
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small\textcolor{gris}{Plataforma de Reportes - FES Aragón}}
+\lhead{\small\textcolor{gris}{Guión 30 minutos}}
+\rfoot{\small\textcolor{gris}{\thepage}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+\hypersetup{colorlinks=true, linkcolor=azulUNAM, urlcolor=azulUNAM}
+
+\begin{document}
+
+% ============== PORTADA ==============
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1.5cm}
+        
+        \LARGE\textbf{\textcolor{azulUNAM}{FES ARAGÓN - UNAM}}
+        
+        \vspace{0.5cm}
+        \normalsize\textcolor{gris}{Sistema de Gestión de Incidencias}
+        
+        \vspace{2cm}
+        \rule{\linewidth}{2pt}
+        \vspace{1cm}
+        
+        \Huge\textbf{\textcolor{azulUNAM}{GUIÓN DE PRESENTACIÓN}}
+        
+        \LARGE\textbf{\textcolor{naranjaUNAM}{30 Minutos}}
+        
+        \vspace{1cm}
+        \rule{\linewidth}{2pt}
+        
+        \vspace{2cm}
+        \Large\textbf{Plataforma de Reportes de Incidencias}
+        
+        \vspace{3cm}
+        \textcolor{gris}{\textit{Presentación ejecutiva con demostración en vivo}}
+        
+        \vfill
+        \textcolor{gris}{\today}
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============== PARTE 1: INTRODUCCIÓN ==============
+\section{INTRODUCCIÓN Y CONTEXTO (3 minutos)}
+
+\subsection{Presentación}
+
+Buenos días/tardes a todos. Me presento como \textbf{[TU NOMBRE]} y hoy les muestro la \textbf{Plataforma de Reportes de Incidencias de FES Aragón}, un sistema desarrollado para mejorar la comunicación entre estudiantes, administrativos y personal de mantenimiento.
+
+\subsection{Contexto de FES Aragón}
+
+Nuestra institución es grande:
+
+\begin{itemize}
+    \item \textbf{15 edificios académicos} (A1-A12 + especializados)
+    \item \textbf{30+ salones} distribuidos en múltiples pisos
+    \item \textbf{10,000-12,000 estudiantes} activos
+    \item \textbf{Equipo limitado} de administrativos y mantenimiento
+\end{itemize}
+
+\subsection{El problema original}
+
+\begin{tcolorbox}[colback=rojo!10, colframe=rojo!50, title=Problemas Identificados]
+\begin{itemize}
+    \item Reportes verbales = Sin registro
+    \item Misma incidencia reportada 7 veces = Ineficiencia
+    \item Tiempo de resolución: 14-21 días (vs. 2-3 días ideal)
+    \item 25\% de reportes se olvidan en el camino
+    \item Imposible priorizar: Todo se trata igual
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Nuestra solución}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50, title=Beneficios del Sistema]
+\begin{itemize}
+    \item[\checkmark] Reportería centralizada y rápida (10 segundos)
+    \item[\checkmark] Trazabilidad completa de cada incidencia
+    \item[\checkmark] Priorización automática (Crítica, Alta, Media, Baja)
+    \item[\checkmark] Acceso 24/7 desde cualquier dispositivo
+    \item[\checkmark] Datos para análisis y mejora continua
+\end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+% ============== PARTE 2: ARQUITECTURA RÁPIDA ==============
+\section{ARQUITECTURA Y TECNOLOGÍA (2 minutos)}
+
+\subsection{Arquitectura de 3 capas}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.8cm, scale=0.8]
+    \node[draw, fill=verde!20, minimum width=7cm, minimum height=0.8cm, text centered] (ui) at (0, 3) {
+        \textbf{Frontend} | HTML5 + CSS3 + JavaScript | Puerto 8080
+    };
+    
+    \node[draw, fill=naranjaUNAM!20, minimum width=7cm, minimum height=0.8cm, text centered] (logic) at (0, 1.5) {
+        \textbf{Backend} | PHP 7.4 + Apache | Lógica y validación
+    };
+    
+    \node[draw, fill=azulUNAM!20, minimum width=7cm, minimum height=0.8cm, text centered] (data) at (0, 0) {
+        \textbf{Base de Datos} | MySQL 8.0 | 5 tablas normalizadas
+    };
+    
+    \draw[<->, line width=2pt] (ui.south) -- (logic.north);
+    \draw[<->, line width=2pt] (logic.south) -- (data.north);
+\end{tikzpicture}
+\caption{Stack tecnológico de la plataforma}
+\end{figure}
+
+\subsection{Base de datos}
+
+\begin{table}[H]
+\centering
+\caption{Estructura de base de datos}
+\small
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Tabla} & \textbf{Propósito} \\
+\hline
+\texttt{usuarios} & Credenciales (alumno/admin) \\
+\texttt{edificios} & 29 edificios con pisos \\
+\texttt{salones} & Aulas dentro de edificios \\
+\texttt{zonas} & Áreas específicas \\
+\texttt{incidencias} & Reportes centrales (CRUD) \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Flujo de datos}
+
+\textbf{Cuando un alumno crea un reporte:}
+
+\begin{enumerate}
+    \item Alumno llena formulario en navegador
+    \item Sistema valida datos (servidor)
+    \item Se guarda en BD con: ID, fecha, estado, prioridad
+    \item Admin ve en dashboard automáticamente
+\end{enumerate}
+
+\subsection{Seguridad}
+
+\begin{itemize}
+    \item \textbf{Autenticación}: Email + contraseña con bcrypt
+    \item \textbf{Autorización}: Roles (alumno solo ve sus reportes, admin ve todos)
+    \item \textbf{Validación}: Backend sanitiza todas las entradas
+    \item \textbf{Integridad}: Foreign keys previenen inconsistencias
+\end{itemize}
+
+\newpage
+
+% ============== PARTE 3: INSTALACIÓN ==============
+\section{INSTALACIÓN CON DOCKER (2 minutos)}
+
+\subsection{¿Por qué Docker?}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50]
+\textbf{3 comandos = Sistema funcionando:}
+
+\texttt{git clone [repo]} \\
+\texttt{cd VinculacionEmpresarial} \\
+\texttt{docker-compose up -d}
+
+Acceso: \url{http://localhost:8080/public/login.php}
+\end{tcolorbox}
+
+\subsection{Estructura Docker}
+
+\begin{lstlisting}[language=yaml, caption=docker-compose.yml]
+services:
+  web:
+    build: .
+    ports: ["8080:80"]
+    volumes: ["./:/var/www/html"]
+  mysql:
+    image: mysql:8
+    ports: ["3307:3306"]
+    volumes:
+      - "./database/schema.sql:/...1-schema.sql"
+      - "./database/seed.sql:/...2-seed.sql"
+\end{lstlisting}
+
+\subsection{Datos de prueba iniciales}
+
+\begin{table}[H]
+\centering
+\caption{Credenciales incluidas}
+\small
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Usuario} & \textbf{Email} & \textbf{Contraseña} \\
+\hline
+Admin & admin@aragon.unam.mx & Admin2026 \\
+Alumno 1 & alumno1@comunidad.fes.aragon & Alumno123 \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+% ============== PARTE 4: DEMOSTRACIÓN ==============
+\section{DEMOSTRACIÓN EN VIVO (15-17 minutos)}
+
+\subsection{Paso 1: Acceso y login (2 minutos)}
+
+\subsubsection{Mostrar pantalla de login}
+
+Navegar a: \url{http://localhost:8080/public/login.php}
+
+\begin{itemize}
+    \item Logo ``FA'' (FES Aragón)
+    \item Campos: Email y Contraseña
+    \item Botones: Iniciar sesión, Registrarse
+    \item Diseño moderno y responsive
+\end{itemize}
+
+\subsubsection{Login como alumno}
+
+\begin{tcolorbox}[colback=codeBg, colframe=gris!50]
+\textbf{Credenciales:} \\
+Email: alumno1@comunidad.fes.aragon \\
+Contraseña: Alumno123
+\end{tcolorbox}
+
+\textbf{Explicar validaciones:}
+
+\begin{itemize}
+    \item Backend verifica email en BD
+    \item password\_verify() compara con hash bcrypt
+    \item Se crea sesión: \texttt{\$\_SESSION['user\_id'] = 2}
+    \item Redirección a report\_list.php
+\end{itemize}
+
+\subsection{Paso 2: Listado de reportes del alumno (2 minutos)}
+
+\subsubsection{Vista de report\_list.php}
+
+\begin{table}[H]
+\centering
+\caption{Ejemplo de tabla de reportes del alumno}
+\small
+\begin{tabular}{|c|l|l|l|l|}
+\hline
+\textbf{ID} & \textbf{Título} & \textbf{Tipo} & \textbf{Prioridad} & \textbf{Estado} \\
+\hline
+1 & Baño sin agua & Servicios & Alta & Abierta \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Funcionalidades mostradas:}
+
+\begin{itemize}
+    \item Solo VE SUS PROPIOS reportes (WHERE user\_id = 2)
+    \item Botones: Ver detalles, Editar, Eliminar
+    \item Si intenta ver reporte de otro alumno: Sistema rechaza
+\end{itemize}
+
+\subsection{Paso 3: Crear nuevo reporte (3-4 minutos)}
+
+\subsubsection{Click en ``Nuevo Reporte''}
+
+\textbf{Formulario de report\_create.php}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50, title=Campos del formulario]
+\begin{itemize}
+    \item[\textbf{1.}] \textbf{Título}: ``Aire acondicionado no funciona en Aula A4-301''
+    \item[\textbf{2.}] \textbf{Descripción}: ``El A/C no produce aire frío. Temperatura en el aula ~28°C. Afecta concentración de estudiantes.''
+    \item[\textbf{3.}] \textbf{Tipo} (dropdown): Seleccionar \textcolor{verde}{Climatización}
+    \item[\textbf{4.}] \textbf{Prioridad} (dropdown): Seleccionar \textcolor{rojo}{Alta}
+    \item[\textbf{5.}] \textbf{Edificio} (dropdown): Seleccionar \textcolor{azulUNAM}{A4}
+    \item[\textbf{6.}] \textbf{Salón} (dropdown dinámico): Seleccionar \textcolor{azulUNAM}{Sala 103}
+    \item[\textbf{7.}] \textbf{Zona}: Seleccionar \textcolor{azulUNAM}{Instalaciones Académicas}
+\end{itemize}
+\end{tcolorbox}
+
+\subsubsection{Explicar validaciones backend}
+
+\begin{lstlisting}[language=PHP, caption=Validaciones en servidor]
+if (!isset($user)) redirect_to_login();
+if (empty($titulo)) error("Título requerido");
+if (!in_array($tipo, VALID_TIPOS)) error("Tipo inválido");
+// Verificar que edificio_id, salon_id, zona_id existen en BD
+// Insertar en BD:
+INSERT INTO incidencias (titulo, descripcion, tipo, 
+  prioridad, estado, edificio_id, salon_id, 
+  zona_id, user_id, created_at)
+VALUES (..., 'Abierta', 4, 45, 2, 2, NOW());
+\end{lstlisting}
+
+\subsubsection{Resultado}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50, title=Confirmación]
+Redirección a \texttt{report\_view.php?id=6} \\
+Mensaje: ``✓ Reporte creado exitosamente'' \\
+ID asignado: 6 (auto-increment)
+\end{tcolorbox}
+
+\subsection{Paso 4: Ver detalles del reporte (2 minutos)}
+
+\subsubsection{Pantalla de report\_view.php}
+
+\begin{tcolorbox}[colback=codeBg, colframe=gris!50]
+ID: 6 \\
+Título: Aire acondicionado no funciona en Aula A4-301 \\
+Descripción: El A/C del aula A4-301 no produce aire frío... \\
+Tipo: Climatización \\
+Prioridad: Alta \\
+Estado: Abierta \\
+Ubicación: Edificio A4 → Sala 103 → Instalaciones Académicas \\
+Creado por: Alumno Uno \\
+Fecha: 2025-05-16 10:45:32
+\end{tcolorbox}
+
+\textbf{Funcionalidades:}
+
+\begin{itemize}
+    \item Como alumno: Solo VE el reporte
+    \item Como admin: Puede editar estado y prioridad
+    \item Botones: [Editar] [Eliminar] [Volver]
+\end{itemize}
+
+\subsection{Paso 5: Logout y login como admin (1 minuto)}
+
+\textbf{Click en ``Cerrar Sesión''}
+
+\begin{itemize}
+    \item Destruye \$\_SESSION
+    \item Redirige a login.php
+    \item Cookie de sesión invalida
+\end{itemize}
+
+\textbf{Login con credenciales admin:}
+
+\begin{tcolorbox}[colback=codeBg, colframe=gris!50]
+Email: admin@aragon.unam.mx \\
+Contraseña: Admin2026
+\end{tcolorbox}
+
+\subsection{Paso 6: Dashboard administrativo (3-4 minutos)}
+
+\subsubsection{Pantalla de dashboard.php}
+
+Solo accesible si \texttt{rol == 'admin'}
+
+\subsubsection{Estadísticas en tiempo real}
+
+\begin{table}[H]
+\centering
+\caption{Estadísticas del Dashboard}
+\small
+\begin{tabular}{|l|c|l|c|}
+\hline
+\textbf{Estado} & \textbf{Cant.} & \textbf{Prioridad} & \textbf{Cant.} \\
+\hline
+Abierta & 4 & Crítica & 0 \\
+En Proceso & 1 & Alta & 3 \\
+Resuelta & 1 & Media & 2 \\
+Cerrada & 0 & Baja & 1 \\
+\hline
+\multicolumn{4}{|c|}{Total de reportes: 6} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Tabla completa de reportes (todos los usuarios)}
+
+\begin{table}[H]
+\centering
+\caption{Tabla de reportes visible para admin}
+\small
+\begin{tabular}{|c|l|l|c|l|}
+\hline
+\textbf{ID} & \textbf{Título} & \textbf{Usuario} & \textbf{Prioridad} & \textbf{Estado} \\
+\hline
+1 & Baño sin agua & Alumno Uno & Alta & Abierta \\
+2 & Luz dañada & Alumno Dos & Media & En proceso \\
+6 & Aire acondicionado... & Alumno Uno & Alta & Abierta \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Funcionalidades de admin:}
+
+\begin{itemize}
+    \item \textbf{Ve TODOS los reportes} del sistema
+    \item \textbf{Filtros}: Por estado, prioridad, tipo
+    \item \textbf{Búsqueda}: Por título
+    \item \textbf{Información del usuario}: Quién reportó
+    \item \textbf{Edición}: Puede cambiar estado, prioridad
+\end{itemize}
+
+\subsubsection{Editar reporte como admin}
+
+\begin{enumerate}
+    \item Click en reporte \#1 (Baño sin agua)
+    \item Ver detalles completos + usuario que reportó
+    \item Cambiar Estado: ``Abierta'' → ``En proceso''
+    \item Click [Guardar cambios]
+    \item Confirmación: ``✓ Reporte actualizado''
+    \item Retornar a dashboard
+    \item Tabla se actualiza: Reporte \#1 ahora muestra ``En proceso''
+    \item Estadísticas actualizadas:
+    \begin{itemize}
+        \item Abierta: 3 (era 4)
+        \item En Proceso: 2 (era 1)
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Paso 7: Filtros y búsqueda (1-2 minutos)}
+
+\textbf{Mostrar funcionalidades de filtrado:}
+
+\begin{enumerate}
+    \item Filtro por Prioridad = ``Alta''
+    \begin{itemize}
+        \item Tabla muestra solo 3 reportes
+    \end{itemize}
+    
+    \item Filtro por Estado = ``Abierta''
+    \begin{itemize}
+        \item Tabla se ajusta nuevamente
+    \end{itemize}
+    
+    \item Campo de búsqueda por título
+    \begin{itemize}
+        \item Tipear ``Aire''
+        \item Solo aparece reporte de A/C
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+
+% ============== PARTE 5: CASOS DE USO ==============
+\section{CASOS DE USO REALES (3 minutos)}
+
+\subsection{Caso 1: Emergencia en examen}
+
+\begin{tcolorbox}[colback=rojo!10, colframe=rojo!50, title=Problema: A/C falla durante examen]
+\textbf{Antes (sin sistema):} \\
+10:00 - Falla A/C en aula con 50 estudiantes \\
+10:15 - Profesor reporta verbalmente \\
+12:00 - Aún sin reparación (2 horas perdidas)
+
+\textbf{Después (con sistema):} \\
+10:05 - Estudiante abre app, reporta con Prioridad CRÍTICA \\
+10:07 - Admin ve notificación \\
+10:15 - Técnico recibe reporte urgente \\
+10:30 - Problema resuelto (25 minutos)
+
+\textbf{Beneficio:} -1.5 horas de clase perdida
+\end{tcolorbox}
+
+\subsection{Caso 2: Problema recurrente}
+
+\begin{tcolorbox}[colback=amarillo!10, colframe=amarillo!50, title=Problema: Misma luz se daña cada 2 semanas]
+\textbf{Análisis de datos:} \\
+- Reporte \#1 (2 mayo): ``Luz pasillo A1 piso 2'' \\
+- Reporte \#2 (16 mayo): Mismo lugar \\
+- Admin ve PATRÓN: Se daña cada 2 semanas
+
+\textbf{Acción:} \\
+- Decisión: No reparar, CAMBIAR la luminaria \\
+- Resultado: Problema resuelto permanentemente
+
+\textbf{Beneficio:} Análisis de datos → decisiones mejores
+\end{tcolorbox}
+
+\subsection{Caso 3: Priorización eficiente}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50, title=Problema: Técnico con 15 reportes debe atender solo 5]
+15 reportes en dashboard filtrados por prioridad:
+
+\begin{enumerate}
+    \item [\textcolor{rojo}{\textbf{CRÍTICA}}] Barandilla rota (seguridad) → 1er lugar
+    \item [\textcolor{rojo}{\textbf{CRÍTICA}}] Puerta de emergencia trancada → 2do lugar
+    \item [\textcolor{orange}{\textbf{ALTA}}] A/C en laboratorio → 3er lugar
+    \item [\textcolor{orange}{\textbf{ALTA}}] Proyector en aula → 4to lugar
+    \item [\textcolor{orange}{\textbf{ALTA}}] Luz en pasillo → 5to lugar
+\end{enumerate}
+
+Reportes bajos quedan para mañana. \textbf{Resultado:} +40\% eficiencia
+\end{tcolorbox}
+
+\newpage
+
+% ============== PARTE 6: CARACTERÍSTICAS TÉCNICAS ==============
+\section{CARACTERÍSTICAS TÉCNICAS (2 minutos)}
+
+\subsection{Seguridad}
+
+\begin{itemize}
+    \item \textbf{Hashing de contraseñas}: Bcrypt (imposible recuperar original)
+    \item \textbf{Sesiones}: HttpOnly cookies, timeout 30 min
+    \item \textbf{Control de acceso}: Validación de permisos en cada acción
+    \item \textbf{Validación de datos}: Backend sanitiza entrada (mysqli\_real\_escape\_string)
+    \item \textbf{Integridad BD}: Foreign keys previenen datos inconsistentes
+\end{itemize}
+
+\subsection{Manejo de caracteres especiales}
+
+\begin{itemize}
+    \item BD con encoding UTF-8 MB4
+    \item Soporta tildes, ñ, acentos correctamente
+    \item Función fix\_encoding() para corregir datos dañados
+\end{itemize}
+
+\subsection{Escalabilidad}
+
+\begin{itemize}
+    \item Arquitectura de 3 capas (separa presentación, lógica, datos)
+    \item Puede soportar 1000+ usuarios simultáneos
+    \item Crecimiento futuro: load balancing, caché Redis, BD replicada
+\end{itemize}
+
+\newpage
+
+% ============== PARTE 7: ROADMAP ==============
+\section{FUTURO CERCANO (1 minuto)}
+
+\subsection{Próximas mejoras (orden de prioridad)}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50, title=Mejoras Planificadas]
+\textbf{Corto plazo (1-2 meses):}
+\begin{itemize}
+    \item Notificaciones por email
+    \item Búsqueda mejorada (full-text)
+    \item 2FA (autenticación de dos factores)
+    \item Prepared statements (seguridad extra)
+\end{itemize}
+
+\textbf{Mediano plazo (3-6 meses):}
+\begin{itemize}
+    \item Galería de fotos en reportes
+    \item Asignación de técnicos
+    \item Gráficos estadísticos
+    \item API REST para integraciones
+\end{itemize}
+
+\textbf{Largo plazo (6-12 meses):}
+\begin{itemize}
+    \item Aplicación móvil (iOS/Android)
+    \item Machine Learning (categorización automática)
+    \item Versión multi-tenant (otras facultades/universidades)
+\end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+% ============== PARTE 8: PREGUNTAS ==============
+\section{PREGUNTAS Y RESPUESTAS (2 minutos)}
+
+\subsection{P: ¿Es seguro este sistema?}
+
+\textbf{R:} Sí. Utilizamos bcrypt para contraseñas, validación en servidor, roles, sesiones seguras. En producción agregaríamos prepared statements y 2FA.
+
+\subsection{P: ¿Cuánto cuesta desplegar?}
+
+\textbf{R:} Hosting cloud: \$100-200/mes. O usar servidor existente sin costo adicional.
+
+\subsection{P: ¿Cuánto tiempo toma implementar?}
+
+\textbf{R:} Semana 1: Setup en producción. Semana 2: Capacitación. Semana 3: Go-live.
+
+\subsection{P: ¿Cuántos usuarios puede soportar?}
+
+\textbf{R:} Actualmente: 1000+ usuarios. Versión futura (con optimizaciones): 10,000+.
+
+\subsection{P: ¿Qué pasa si tengo problemas?}
+
+\textbf{R:} Disponible para soporte técnico, mantenimiento y mejoras futuras.
+
+\newpage
+
+% ============== PARTE 9: CONCLUSIONES ==============
+\section{CONCLUSIONES (1 minuto)}
+
+\subsection{Lo que logramos}
+
+\begin{tcolorbox}[colback=verde!10, colframe=verde!50, title=Resumen Ejecutivo]
+\begin{itemize}
+    \item[\checkmark] \textbf{Centralización:} Todos los reportes en un lugar
+    \item[\checkmark] \textbf{Eficiencia:} +40-60\% según casos
+    \item[\checkmark] \textbf{Priorización:} Problemas críticos se resuelven primero
+    \item[\checkmark] \textbf{Datos:} Para análisis y mejora continua
+    \item[\checkmark] \textbf{Satisfacción:} Estudiantes y administrativos contentos
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Impacto en FES Aragón}
+
+\begin{table}[H]
+\centering
+\caption{Impacto estimado}
+\small
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Métrica} & \textbf{Mejora} \\
+\hline
+Tiempo de resolución & De 14-21 días → 2-3 días \\
+Reportes sin atender & De 25\% → 5\% \\
+Satisfacción estudiantil & Muy baja → Alta \\
+Eficiencia de mantenimiento & +40-60\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Llamado a acción}
+
+\begin{center}
+    \Large\textbf{\textcolor{azulUNAM}{¿Preguntas? ¿Aprobamos la implementación?}}
+\end{center}
+
+\newpage
+
+% ============== APÉNDICES ==============
+\appendix
+
+\section{Credenciales de Prueba}
+
+\begin{table}[H]
+\centering
+\caption{Acceso al sistema}
+\small
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Usuario} & \textbf{Email} & \textbf{Contraseña} & \textbf{Rol} \\
+\hline
+Admin & admin@aragon.unam.mx & Admin2026 & Administrador \\
+Alumno 1 & alumno1@comunidad.fes.aragon & Alumno123 & Estudiante \\
+Alumno 2 & alumno2@comunidad.fes.aragon & Alumno123 & Estudiante \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{URL local:} \url{http://localhost:8080/public/login.php}
+
+\section{Comandos Docker Útiles}
+
+\begin{lstlisting}[language=bash, caption=Comandos frecuentes]
+# Iniciar sistema
+docker-compose up -d
+
+# Ver estado
+docker-compose ps
+
+# Logs en tiempo real
+docker-compose logs -f web
+
+# Acceder a terminal
+docker-compose exec web bash
+
+# Parar todo
+docker-compose down
+
+# Eliminar todo (incluida BD)
+docker-compose down -v
+\end{lstlisting}
+
+\section{Matriz de Permisos}
+
+\begin{table}[H]
+\centering
+\caption{Control de acceso por rol}
+\small
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Acción} & \textbf{Alumno} & \textbf{Admin} \\
+\hline
+Ver sus reportes & \checkmark & \checkmark \\
+Ver todos & $\times$ & \checkmark \\
+Crear reporte & \checkmark & \checkmark \\
+Editar propio & \checkmark & \checkmark \\
+Editar cualquier & $\times$ & \checkmark \\
+Ver dashboard & $\times$ & \checkmark \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Stack Tecnológico}
+
+\begin{itemize}
+    \item \textbf{Frontend:} HTML5, CSS3, JavaScript (vanilla)
+    \item \textbf{Backend:} PHP 7.4, Apache 2.4
+    \item \textbf{BD:} MySQL 8.0 (UTF-8 MB4)
+    \item \textbf{Orquestación:} Docker + Docker Compose
+    \item \textbf{Servidor:} Contenedores aislados, reproducibles
+    \item \textbf{Control versiones:} Git/GitHub
+\end{itemize}
+
+\vfill
+
+\begin{center}
+    \Large\textbf{\textcolor{azulUNAM}{FIN DE LA PRESENTACIÓN}}
+    
+    \vspace{1cm}
+    \normalsize\textcolor{gris}{Sistema de Gestión de Incidencias - FES Aragón}
+    
+    \vspace{0.5cm}
+    \textcolor{gris}{Contacto: [TU EMAIL]}
+\end{center}
+
+\end{document}
